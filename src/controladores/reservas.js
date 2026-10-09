@@ -1,0 +1,46 @@
+const servicioReservas = require("../servicios/reservas");
+
+function listarReservas(req, res) {
+  const reservas = servicioReservas.obtenerTodas();
+  res.render("reservas/lista", {
+    titulo: "Listado de Reservas",
+    reservas,
+  });
+}
+
+function formularioNuevaReserva(req, res) {
+  res.render("reservas/nueva", {
+    titulo: "Nueva Reserva",
+    valores: {},
+    error: null,
+  });
+}
+
+function obtenerDetalleReserva(req, res) {
+  const id = Number(req.params.id);
+  const reserva = servicioReservas.obtenerPorId(id);
+
+  if (!reserva) {
+    return res.status(404).render("no-encontrado", {
+      titulo: "Reserva no encontrada",
+      mensaje: "La reserva solicitada no existe.",
+    });
+  }
+
+  res.render("reservas/detalle", {
+    titulo: `Reserva #${reserva.id}`,
+    reserva,
+  });
+}
+
+function crearNuevaReserva(req, res) {
+  servicioReservas.crearReserva(req.reservaValidada);
+  res.redirect("/reservas");
+}
+
+module.exports = {
+  listarReservas,
+  formularioNuevaReserva,
+  obtenerDetalleReserva,
+  crearNuevaReserva,
+};
